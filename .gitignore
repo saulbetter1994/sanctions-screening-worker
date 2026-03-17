@@ -1,0 +1,7 @@
+node_modules/
+dist/
+workers.json
+.env
+*.js
+*.js.map
+*.d.ts
