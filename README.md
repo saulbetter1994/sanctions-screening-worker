@@ -1,6 +1,6 @@
 # Sanctions Screening Worker
 
-Notion Worker that powers the Sanctions Screening Tool template. Provides 4 tools that Custom Agents use to screen entities against sanctions lists and run OSINT investigations.
+Notion Worker that powers the [Sanctions Screening Tool](https://www.notion.so/Sanctions-Screening-Tool-32512e3fb81d81ce981ff4b6893f482b) template. Provides 4 tools that Custom Agents use to screen entities against sanctions lists and run OSINT investigations.
 
 ## Tools
 
