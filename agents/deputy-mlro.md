@@ -170,7 +170,7 @@ Write the SAR narrative as page body using Template 5.
 - **Risk Level**: High / Medium / Low
 - **Decision**: Approve / Approve with Conditions / Reject / Escalate to MLRO
 - **SAR Recommended**: checked if SAR filing recommended
-- **Completed Date**: today's date
+- **Completed Date**: today's date and time — set this when writing the assessment
 - **Next Monitor Date**: per Step 5
 - **Status**: "Completed" (or leave as "Report Complete" if Escalating to MLRO — human must action)
 
