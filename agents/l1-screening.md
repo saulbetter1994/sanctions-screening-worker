@@ -12,12 +12,32 @@ You run when a new row is added to the **Screening Cases** database with Status 
 
 ## Step 1: Read the Screening Case
 
-Read the new Screening Case row. Extract:
-- **Case Title** (title — the entity name)
-- **Entity Type** (select: Individual / Organisation / Vessel)
-- **Entity Data** (text — JSON of all entity fields)
+Read the new Screening Case row. Extract all available properties:
 
-Parse the Entity Data JSON to get all available fields.
+**Always read:**
+- **Name** (title — the entity name)
+- **Entity Type** (select: Individual / Organisation / Vessel)
+- **Country/Region** (text)
+- **Aliases** (text)
+- **Additional Info** (text — optional, may contain extra data as JSON or free text)
+
+**Individual fields:**
+- **Date of Birth** (date)
+- **Nationality** (text)
+- **Passport Number** (text)
+- **National ID Number** (text)
+- **Gender** (select)
+
+**Organisation fields:**
+- **Registration Number** (text)
+- **Jurisdiction** (text)
+
+**Vessel fields:**
+- **IMO Number** (text)
+- **Flag State** (text)
+- **MMSI** (text)
+
+If **Additional Info** contains JSON, parse it for any extra fields not covered by the structured properties (e.g. Place of Birth, Tax ID, Address, Incorporation Date).
 
 ---
 
@@ -29,59 +49,48 @@ Parse the Entity Data JSON to get all available fields.
 | Organisation | `Company` (commercial) or `Organization` (non-commercial) |
 | Vessel | `Vessel` |
 
-Default to `Company` for organisations unless the Entity Data indicates it's a non-commercial body (NGO, government agency).
+Default to `Company` for organisations unless the Additional Info indicates it's a non-commercial body (NGO, government agency).
 
 ---
 
 ## Step 3: Build Properties
 
-Build the `properties` dict from Entity Data using these mappings. Only include properties that have values — do not send empty arrays.
+Build the `properties` dict from the Screening Case properties. Only include properties that have values — do not send empty arrays.
 
 ### Individual → Person
-| Entity Data Field | OpenSanctions Property |
+| Notion Property | OpenSanctions Property |
 |---|---|
-| Full Legal Name | `name` |
+| Name | `name` |
 | Date of Birth | `birthDate` |
 | Nationality | `nationality` |
 | Country/Region | `country` |
-| First Name | `firstName` |
-| Last Name | `lastName` |
-| Middle Name | `middleName` |
 | Aliases | `alias` |
 | Gender | `gender` |
-| Place of Birth | `birthPlace` |
 | Passport Number | `passportNumber` |
 | National ID Number | `idNumber` |
-| Address | `address` |
-| Tax ID | `taxNumber` |
 
 ### Organisation → Company
-| Entity Data Field | OpenSanctions Property |
+| Notion Property | OpenSanctions Property |
 |---|---|
-| Legal Name | `name` |
+| Name | `name` |
 | Jurisdiction | `jurisdiction` |
 | Country/Region | `country` |
 | Registration Number | `registrationNumber` |
-| Tax/VAT Number | `taxNumber` |
-| Aliases / Trading Names | `alias` |
-| Incorporation Date | `incorporationDate` |
-| Sector / Industry | `sector` |
-| Legal Form | `legalForm` |
-| Website | `website` |
-| Address | `address` |
+| Aliases | `alias` |
 
 ### Vessel → Vessel
-| Entity Data Field | OpenSanctions Property |
+| Notion Property | OpenSanctions Property |
 |---|---|
-| Vessel Name | `name` |
+| Name | `name` |
 | IMO Number | `imoNumber` |
 | Flag State | `flag` |
 | MMSI | `mmsi` |
-| Call Sign | `callSign` |
-| Vessel Type | `type` |
-| Tonnage | `tonnage` |
-| Previous Names | `previousName` |
-| Past Flags | `pastFlags` |
+| Aliases | `previousName` |
+
+If Additional Info contains extra fields, also map them:
+- `birthPlace`, `address`, `taxNumber`, `firstName`, `lastName`, `middleName` (Individual)
+- `taxNumber`, `incorporationDate`, `sector`, `legalForm`, `website`, `address` (Organisation)
+- `callSign`, `type`, `tonnage`, `pastFlags` (Vessel)
 
 All property values must be arrays of strings: `["value"]`.
 
