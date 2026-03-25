@@ -87,22 +87,7 @@ All property values must be arrays of strings: `["value"]`.
 
 ---
 
-## Step 4: Assess Input Data Sufficiency
-
-Before calling the API, assess whether the input has enough fields to make a determination if a hit comes back.
-
-**Sufficient input** = name PLUS at least one identifying field:
-- Individual: DOB, nationality, passport number, national ID, or place of birth
-- Organisation: registration number, jurisdiction, incorporation date, or tax number
-- Vessel: IMO number, MMSI, or flag state
-
-**Insufficient input** = name only, with no other identifying fields.
-
-Record this assessment — it affects classification in Step 6.
-
----
-
-## Step 5: Call matchEntity Tool
+## Step 4: Call matchEntity Tool
 
 Use the `matchEntity` Worker tool:
 - `schema`: The mapped schema from Step 2
@@ -116,7 +101,7 @@ If the tool returns an error:
 
 ---
 
-## Step 6: Classify Results
+## Step 5: Classify Results
 
 ### If API returns zero results:
 - **Classification: No Match**
@@ -129,31 +114,25 @@ If the tool returns an error:
 Compare the matched record's fields against the subject's input data. If you have enough fields to compare AND the fields clearly point to a different person/entity (e.g. DOB is 20+ years different, completely different nationality, different gender, clearly different sector):
 - **Classification: False Positive**
 - Pipeline: → set Status to "Completed"
-- Write each result with score >= 0.30 to L1 Results with Classification = "False Positive"
 
-**Check 2 — Is the input insufficient to differentiate?**
+**Check 2 — Score-based classification:**
 
-If input data was name-only (insufficient per Step 4 assessment) AND any result came back:
-- **Classification: Needs Info**
-- Pipeline: → set Status to "Needs Info"
-- Write info request to case log (see Step 8)
-
-**Check 3 — Score-based classification (sufficient input, cannot prove false positive):**
-
-| Score | Additional fields confirmed | Classification |
-|---|---|---|
-| >= 0.80 | At least one extra field confirmed | True Match |
-| >= 0.80 | Name only (no extra fields matched) | Needs Info |
-| 0.50–0.79 | Any | Potential Match |
-| 0.30–0.49 | Any | No Match (logged) |
+| Score | Classification |
+|---|---|
+| >= 0.80 + at least one extra field confirmed | True Match |
+| >= 0.80, name only (no extra fields confirmed) | Potential Match |
+| 0.50–0.79 | Potential Match |
+| 0.30–0.49 | Potential Match |
 
 Use the OVERALL highest-risk classification across all results.
 
 **True Match or Potential Match** → set Status to "L1 Complete" (triggers L2 Agent)
 
+L1 does NOT make "Needs Info" determinations. If there are hits but insufficient data to confirm or deny, send to L2 as Potential Match — L2 has web search and OSINT capabilities to investigate further.
+
 ---
 
-## Step 7: Write Results to L1 Results Database
+## Step 6: Write Results to L1 Results Database
 
 For each result with score >= 0.30, create a row in the **L1 Results** database:
 - **Match Name**: The result's caption
@@ -175,13 +154,12 @@ Common dataset mappings:
 
 ---
 
-## Step 8: Update Screening Case Properties
+## Step 7: Update Screening Case Properties
 
 | Classification | L1 Classification | Status |
 |---|---|---|
 | No Match | No Match | Completed |
 | False Positive | False Positive | Completed |
-| Needs Info | Needs Info | Needs Info |
 | Potential Match | Potential Match | L1 Complete |
 | True Match | True Match | L1 Complete |
 
@@ -191,7 +169,7 @@ Also update:
 
 ---
 
-## Step 9: Append to Case Log
+## Step 8: Append to Case Log
 
 Append to the **page body** of the Screening Case. Never overwrite existing content — always append.
 
@@ -203,24 +181,9 @@ Append to the **page body** of the Screening Case. Never overwrite existing cont
 
 Results: [N] hits returned from OpenSanctions | Top score: [X.XX]
 
-Classification: [True Match / Potential Match / No Match / False Positive / Needs Info]
+Classification: [True Match / Potential Match / No Match / False Positive]
 
 [If False Positive]: Differentiated from matched record — [brief reason e.g. "DOB differs by 28 years, different nationality"]
-
-[If Needs Info]: Insufficient input data to confirm or deny match.
-
-**Information Required to Resolve:**
-- [List specific documents/fields needed based on entity type and missing fields]
-
-Examples by entity type:
-- Individual missing DOB/nationality → "Passport copy or national ID (to verify date of birth and nationality)"
-- Individual missing ID numbers → "Passport number or national ID number"
-- Individual missing address → "Proof of address — utility bill or bank statement dated within 3 months"
-- Organisation missing registration number → "Certificate of incorporation or company registry extract"
-- Organisation missing UBO/directors → "Shareholder register or UBO declaration"
-- Vessel missing IMO → "Classification society certificate or ship registry extract"
-
-**Next step**: Awaiting additional information from client/submitter before pipeline can continue. This is a manual step outside the automated pipeline.
 
 [If No Match]: No matching records found in OpenSanctions database.
 
