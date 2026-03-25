@@ -1,6 +1,33 @@
-# Sanctions Screening Worker
+# Sanctions Screening Tool
 
-Notion Worker that powers the [Sanctions Screening Tool](https://www.notion.so/Sanctions-Screening-Tool-32512e3fb81d81ce981ff4b6893f482b) template. Provides 4 tools that Custom Agents use to screen entities against sanctions lists and run OSINT investigations.
+Automated sanctions, PEP, and adverse media screening powered by AI agents. Screen entities against 2.1M+ records from OpenSanctions, run OSINT investigations, generate compliance reports, and get MLRO-grade risk assessments.
+
+**[View the full Notion template and documentation](https://www.notion.so/Sanctions-Screening-Tool-32512e3fb81d81ce981ff4b6893f482b)**
+
+The Notion page contains the complete working template — 5 interconnected databases, 6 reference pages with domain knowledge, a dashboard, and a detailed setup guide. Start there to understand the full system before looking at the code.
+
+---
+
+## What This Does
+
+A 4-stage automated compliance screening pipeline:
+
+| Stage | Agent | What It Does |
+|---|---|---|
+| L1 Screening | L1 Screening Agent | Matches entity against OpenSanctions (sanctions, PEPs, watchlists). Classifies as True Match / Potential Match / False Positive / No Match. |
+| L2 OSINT | L2 OSINT Agent | Runs 5-step investigation: identity verification, adverse media, PEP check, network analysis, red flag assessment. |
+| Report Writing | Report Writer Agent | Generates professional EDD reports, false positive reports, or escalation reports. |
+| MLRO Review | Deputy MLRO Agent | Risk assessment (High/Medium/Low), decision recommendation, SAR narrative if needed. |
+
+You add a name to the Screening Cases database — the pipeline runs automatically from L1 through to a final risk decision.
+
+## Architecture
+
+This implementation uses **Notion Custom Agents** + **Notion Workers** — everything runs inside Notion with no external servers.
+
+- **This repo** contains the Worker (TypeScript) that wraps the OpenSanctions and Brave Search APIs into 4 tools
+- **The Notion template** contains the databases, agent instructions, reference materials, and setup guide
+- **You bring your own API keys** — OpenSanctions for sanctions/PEP data, Brave Search for OSINT
 
 ## Tools
 
@@ -12,6 +39,8 @@ Notion Worker that powers the [Sanctions Screening Tool](https://www.notion.so/S
 | `healthCheck` | Verify API keys and service connectivity |
 
 ## Setup
+
+Full step-by-step instructions are in the [Setup Guide](https://www.notion.so/32512e3fb81d81e6ba09f964ef0fb596) on the Notion template. Quick version:
 
 ### 1. Prerequisites
 
@@ -30,6 +59,8 @@ ntn login
 ### 3. Deploy
 
 ```bash
+git clone https://github.com/saulbetter1994/sanctions-screening-worker.git
+cd sanctions-screening-worker
 npm install
 ntn workers deploy --name "Sanctions Screening Worker"
 ```
@@ -43,9 +74,9 @@ ntn workers env set BRAVE_SEARCH_API_KEY=your-key
 
 Keys are stored as encrypted environment variables on Notion's servers. They never appear in this code.
 
-## Agent Instructions
+### 5. Create the 4 Custom Agents
 
-The `agents/` folder contains instruction files for the 4 Custom Agents. Copy-paste each into the corresponding agent's Instructions field in Notion:
+The `agents/` folder contains instruction files for each agent. See the [Setup Guide](https://www.notion.so/32512e3fb81d81e6ba09f964ef0fb596) for exact configuration — triggers, permissions, and tool access for each one.
 
 | File | Agent | Trigger |
 |---|---|---|
@@ -53,8 +84,6 @@ The `agents/` folder contains instruction files for the 4 Custom Agents. Copy-pa
 | `agents/l2-osint.md` | L2 OSINT Agent | Status changed to "L1 Complete" |
 | `agents/report-writer.md` | Report Writer Agent | Status changed to "L2 Complete" |
 | `agents/deputy-mlro.md` | Deputy MLRO Agent | Status changed to "Report Complete" |
-
-See the **Setup Guide** page in the Notion template for full step-by-step instructions.
 
 ## Security
 
@@ -65,11 +94,9 @@ See the **Setup Guide** page in the Notion template for full step-by-step instru
 
 ---
 
-## This Is a Proof of Concept
+## Proof of Concept — Transferable Architecture
 
-This implementation runs entirely within Notion — no external servers, no SaaS infrastructure. It is intentionally minimal to demonstrate what is possible with Notion Custom Agents and Workers.
-
-The architecture is designed to be transferable. The same screening pipeline can be rebuilt on different infrastructure depending on your needs:
+This is a proof of concept. It runs entirely within Notion to demonstrate the screening pipeline with zero external infrastructure. The architecture is designed to be transferable — the same pipeline can be rebuilt on different infrastructure depending on your needs:
 
 | Layer | This template | Alternative implementation |
 |---|---|---|
@@ -79,13 +106,10 @@ The architecture is designed to be transferable. The same screening pipeline can
 | Reports | Notion pages | PDFs in Supabase Storage / Firestore |
 | Hosting | Notion's infrastructure | Railway / Fly.io / Vercel / AWS |
 
-**The core logic — API integrations, scoring thresholds, pipeline stages — stays identical across all implementations.** Only the hosting and storage layer changes.
+The core logic — API integrations, scoring thresholds, pipeline stages — stays identical across all implementations. Only the hosting and storage layer changes.
 
-If you need:
-- A standalone web app with user authentication → rebuild with Claude API + Supabase
-- A tool accessible from Claude.ai directly → port the Worker to an MCP server
-- Enterprise-scale volume with audit trails → Claude API + PostgreSQL + event logging
+The `src/index.ts` Worker code maps directly to an MCP server: replace `worker.tool()` with `server.tool()` from `@modelcontextprotocol/sdk` and the screening logic is unchanged.
 
-The `src/index.ts` Worker code maps directly to an MCP server: replace `worker.tool()` with `server.tool()` from `@modelcontextprotocol/sdk` and the logic is unchanged.
+---
 
-This template exists to validate the screening workflow and demonstrate the AI pipeline. It is a starting point, not a ceiling.
+*Built by Paul So. Powered by OpenSanctions + Brave Search.*
