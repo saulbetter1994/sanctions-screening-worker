@@ -186,6 +186,7 @@ Common dataset mappings:
 | True Match | True Match | L1 Complete |
 
 Also update:
+- **Screening Date**: today's date and time (set at the start of screening)
 - **Top Score**: Highest score among all results (or 0 if no results)
 
 ---
