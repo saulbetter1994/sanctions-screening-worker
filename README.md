@@ -62,3 +62,30 @@ See the **Setup Guide** page in the Notion template for full step-by-step instru
 - `.env.example` shows required variables but contains no values
 - `workers.json` (contains your workspace/worker IDs) is gitignored
 - All screening data stays in your Notion workspace
+
+---
+
+## This Is a Proof of Concept
+
+This implementation runs entirely within Notion — no external servers, no SaaS infrastructure. It is intentionally minimal to demonstrate what is possible with Notion Custom Agents and Workers.
+
+The architecture is designed to be transferable. The same screening pipeline can be rebuilt on different infrastructure depending on your needs:
+
+| Layer | This template | Alternative implementation |
+|---|---|---|
+| Agent runtime | Notion Custom Agents | Claude API / Claude.ai Projects |
+| Tool server | Notion Worker (`@notionhq/workers`) | MCP Server (`@modelcontextprotocol/sdk`) |
+| Database | Notion databases | Supabase / Firebase / PostgreSQL |
+| Reports | Notion pages | PDFs in Supabase Storage / Firestore |
+| Hosting | Notion's infrastructure | Railway / Fly.io / Vercel / AWS |
+
+**The core logic — API integrations, scoring thresholds, pipeline stages — stays identical across all implementations.** Only the hosting and storage layer changes.
+
+If you need:
+- A standalone web app with user authentication → rebuild with Claude API + Supabase
+- A tool accessible from Claude.ai directly → port the Worker to an MCP server
+- Enterprise-scale volume with audit trails → Claude API + PostgreSQL + event logging
+
+The `src/index.ts` Worker code maps directly to an MCP server: replace `worker.tool()` with `server.tool()` from `@modelcontextprotocol/sdk` and the logic is unchanged.
+
+This template exists to validate the screening workflow and demonstrate the AI pipeline. It is a starting point, not a ceiling.
