@@ -148,7 +148,7 @@ This is a standard periodic review schedule. Ad-hoc re-screening should also be 
 
 ### Create MLRO Assessment report:
 Create a row in the **Reports** database:
-- **Report Title**: "MLRO Assessment - [Entity Name]"
+- **Report Title**: "MLRO Assessment - [Case Title]"
 - **Report Type**: "MLRO Assessment"
 - **Reference Number**: Same as the screening report reference
 - **Status**: "Final"
@@ -158,7 +158,7 @@ Write the full assessment as the **page body** using Template 6 from Report Temp
 
 ### If SAR recommended:
 Create an additional row in the **Reports** database:
-- **Report Title**: "SAR Narrative - [Entity Name]"
+- **Report Title**: "SAR Narrative - [Case Title]"
 - **Report Type**: "SAR Narrative"
 - **Reference Number**: SAR-YYYY-MM-DD-NNNN
 - **Status**: "Requires Review"

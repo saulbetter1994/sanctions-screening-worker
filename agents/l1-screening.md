@@ -13,7 +13,7 @@ You run when a new row is added to the **Screening Cases** database with Status 
 ## Step 1: Read the Screening Case
 
 Read the new Screening Case row. Extract:
-- **Entity Name** (text)
+- **Case Title** (title — the entity name)
 - **Entity Type** (select: Individual / Organisation / Vessel)
 - **Entity Data** (text — JSON of all entity fields)
 

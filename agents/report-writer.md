@@ -154,7 +154,7 @@ Include:
 ## Step 5: Write to Notion
 
 Create a row in the **Reports** database:
-- **Report Title**: "[Report Type] - [Entity Name]" (e.g., "EDD Report - John Smith")
+- **Report Title**: "[Report Type] - [Case Title]" (e.g., "EDD Report - John Smith")
 - **Report Type**: No Match / False Positive / Full EDD / False Positive + Findings / Escalation
 - **Reference Number**: The generated SCR-YYYY-MM-DD-NNNN
 - **Status**: "Final" (or "Requires Review" for Escalation and False Positive + Findings reports)
@@ -179,7 +179,7 @@ Append to the **page body** of the Screening Case. Never overwrite existing cont
 
 **Report Writer — [YYYY-MM-DD HH:MM]**
 
-Report generated: [Report Type] — [Entity Name] ([Reference Number])
+Report generated: [Report Type] — [Case Title] ([Reference Number])
 
 Status updated to: [Completed / Report Complete]
 
