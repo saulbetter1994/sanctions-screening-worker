@@ -139,6 +139,8 @@ Use the OVERALL highest-risk classification across all results.
 
 L1 does NOT make "Needs Info" determinations. If there are hits but insufficient data to confirm or deny, send to L2 as Potential Match — L2 has web search and OSINT capabilities to investigate further.
 
+> **Note on "Needs Info" status:** This is a reserved status for human-in-the-loop cases where the screening cannot proceed — e.g. incomplete entity data or documents required before screening can begin. It is set manually by a human reviewer, not by this agent. A future Document Collection Agent will trigger on this status to request information via email or WhatsApp.
+
 ---
 
 ## Step 6: Write Results to L1 Results Database

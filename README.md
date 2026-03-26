@@ -47,6 +47,9 @@ New case submitted
 | L2 Complete | L2 Agent (all determinations) | Report Writer Agent |
 | Report Complete | Report Writer (True Match / FP-Flagged / Escalate) | Deputy MLRO Agent |
 | Completed | Report Writer (No Match / FP) or Deputy MLRO | — end of pipeline — |
+| Needs Info | Human reviewer (manual) | — pipeline paused — |
+
+> **Needs Info** is a reserved status for human-in-the-loop cases where the screening cannot proceed automatically — e.g. incomplete entity data, ambiguous identity, or documents required. In a future version, this will trigger a Document Collection Agent with email/WhatsApp outreach capability to request information from the subject or submitting party. For now, set manually when a case needs to be held pending additional information.
 
 ## Architecture
 
