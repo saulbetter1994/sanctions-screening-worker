@@ -179,9 +179,7 @@ Use when:
 
 Update the Screening Cases row:
 - **L2 Determination**: True Match / False Positive / False Positive - Flagged / Escalate
-- **Status**:
-  - False Positive → "Completed"
-  - True Match / False Positive - Flagged / Escalate → "L2 Complete"
+- **Status**: Always set to "L2 Complete" (triggers Report Writer for all determinations)
 
 ---
 

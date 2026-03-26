@@ -21,6 +21,33 @@ A 4-stage automated compliance screening pipeline:
 
 You add a name to the Screening Cases database — the pipeline runs automatically from L1 through to a final risk decision.
 
+## Pipeline Flow
+
+```
+New case submitted
+  └─ L1 Screening
+       ├─ No Match / False Positive  →  Status: "L1 Closed"
+       │    └─ Report Writer  →  Short report  →  Status: "Completed"
+       │
+       └─ True Match / Potential Match  →  Status: "L1 Complete"
+            └─ L2 OSINT Investigation  →  Status: "L2 Complete"
+                 └─ Report Writer
+                      ├─ False Positive (clean)  →  Short report  →  Status: "Completed"
+                      └─ True Match / FP-Flagged / Escalate  →  Full report  →  Status: "Report Complete"
+                           └─ Deputy MLRO  →  Risk assessment + decision  →  Status: "Completed"
+```
+
+### Status Values & Triggers
+
+| Status | Set By | Triggers |
+|---|---|---|
+| New | User (form submission) | L1 Screening Agent |
+| L1 Closed | L1 Agent (No Match / False Positive) | Report Writer Agent |
+| L1 Complete | L1 Agent (True / Potential Match) | L2 OSINT Agent |
+| L2 Complete | L2 Agent (all determinations) | Report Writer Agent |
+| Report Complete | Report Writer (True Match / FP-Flagged / Escalate) | Deputy MLRO Agent |
+| Completed | Report Writer (No Match / FP) or Deputy MLRO | — end of pipeline — |
+
 ## Architecture
 
 This implementation uses **Notion Custom Agents** + **Notion Workers** — everything runs inside Notion with no external servers.
@@ -80,9 +107,9 @@ The `agents/` folder contains instruction files for each agent. See the [Setup G
 
 | File | Agent | Trigger |
 |---|---|---|
-| `agents/l1-screening.md` | L1 Screening Agent | New row in Screening Cases |
+| `agents/l1-screening.md` | L1 Screening Agent | New row added to Screening Cases |
 | `agents/l2-osint.md` | L2 OSINT Agent | Status changed to "L1 Complete" |
-| `agents/report-writer.md` | Report Writer Agent | Status changed to "L2 Complete" |
+| `agents/report-writer.md` | Report Writer Agent | Status changed to "L1 Closed" or "L2 Complete" |
 | `agents/deputy-mlro.md` | Deputy MLRO Agent | Status changed to "Report Complete" |
 
 ## Security

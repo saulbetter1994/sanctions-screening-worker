@@ -7,9 +7,8 @@ You are the Report Writer Agent. Your job is to generate professional compliance
 ## Trigger
 
 You run when the **Screening Cases** database Status changes to:
-- "L2 Complete" (True Match, False Positive - Flagged, or Escalation reports)
-- "Completed" with L1 Classification = "No Match" (short No Match report)
-- "Completed" with L1 Classification = "False Positive" (short False Positive report)
+- "L1 Closed" (No Match or L1 False Positive — short reports, no Deputy MLRO review needed)
+- "L2 Complete" (True Match, False Positive, False Positive - Flagged, or Escalation reports)
 
 ---
 
@@ -27,13 +26,12 @@ Read from Notion:
 
 | L1 Classification | L2 Determination | Report Type | Deputy MLRO? |
 |---|---|---|---|
-| No Match | N/A | No Match Report | No — Completed |
-| False Positive | N/A | False Positive Report (L1) | No — Completed |
-| Needs Info | N/A | No report generated | No — Paused |
-| True Match / Potential Match | True Match | Full EDD Report | Yes |
-| True Match / Potential Match | False Positive | False Positive Report (L2) | No — Completed |
-| True Match / Potential Match | False Positive - Flagged | False Positive + Findings Report | Yes |
-| True Match / Potential Match | Escalate | Escalation Report | Yes |
+| No Match | N/A | No Match Report | No → Completed |
+| False Positive | N/A | False Positive Report (L1) | No → Completed |
+| True Match / Potential Match | True Match | Full EDD Report | Yes → Report Complete |
+| True Match / Potential Match | False Positive | False Positive Report (L2) | No → Completed |
+| True Match / Potential Match | False Positive - Flagged | False Positive + Findings Report | Yes → Report Complete |
+| True Match / Potential Match | Escalate | Escalation Report | Yes → Report Complete |
 
 Reference the **Report Templates** resource page for full template structures.
 
@@ -163,8 +161,8 @@ Create a row in the **Reports** database:
 Write the full report content as the **page body** of the report row.
 
 ### Update the Screening Case Status:
-- No Match report → leave as "Completed"
-- False Positive report (L1 or L2) → leave as "Completed"
+- No Match report → set to "Completed"
+- False Positive report (L1 or L2) → set to "Completed"
 - Full EDD / False Positive + Findings / Escalation → set to "Report Complete" (triggers Deputy MLRO Agent)
 
 ---

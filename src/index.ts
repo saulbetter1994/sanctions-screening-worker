@@ -35,8 +35,14 @@ worker.tool("matchEntity", {
       .describe(
         'Dataset to search against. Options: "default" (~2.1M entities, recommended), "sanctions" (~100K), "peps" (~900K), "crime", "debarment", "regulatory", "maritime". Defaults to "default".'
       ),
+    limit: j
+      .number()
+      .nullable()
+      .describe(
+        "Maximum number of match results to return (1-10). Defaults to 5. Use a lower limit for common names to avoid context overload."
+      ),
   }),
-  execute: async ({ schema, propertiesJson, dataset }) => {
+  execute: async ({ schema, propertiesJson, dataset, limit }) => {
     if (!OPENSANCTIONS_API_KEY) {
       throw new Error(
         "OPENSANCTIONS_API_KEY is not configured. Set it with: ntn workers env set OPENSANCTIONS_API_KEY=your-key"
@@ -58,6 +64,7 @@ worker.tool("matchEntity", {
       queries: {
         subject: { schema, properties },
       },
+      limit: limit ?? 5,
     };
 
     const response = await fetch(url, {
@@ -140,8 +147,14 @@ worker.tool("searchWeb", {
       .number()
       .nullable()
       .describe("Pagination offset. Defaults to 0."),
+    freshness: j
+      .string()
+      .nullable()
+      .describe(
+        'Limit results by recency. Options: "pd" (past day), "pw" (past week), "pm" (past month), "py" (past year). Omit for all-time results. Use "py" for adverse media searches.'
+      ),
   }),
-  execute: async ({ query, count, offset }) => {
+  execute: async ({ query, count, offset, freshness }) => {
     if (!BRAVE_SEARCH_API_KEY) {
       throw new Error(
         "BRAVE_SEARCH_API_KEY is not configured. Set it with: ntn workers env set BRAVE_SEARCH_API_KEY=your-key"
@@ -154,6 +167,9 @@ worker.tool("searchWeb", {
     });
     if (offset) {
       params.set("offset", String(offset));
+    }
+    if (freshness) {
+      params.set("freshness", freshness);
     }
 
     const response = await fetch(`${BRAVE_SEARCH_URL}?${params}`, {

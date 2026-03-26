@@ -114,7 +114,7 @@ If the tool returns an error:
 
 ### If API returns zero results:
 - **Classification: No Match**
-- Pipeline: → set Status to "Completed"
+- Pipeline: → set Status to "L1 Closed" (triggers Report Writer for short No Match report)
 
 ### If API returns results (any score):
 
@@ -122,7 +122,7 @@ If the tool returns an error:
 
 Compare the matched record's fields against the subject's input data. If you have enough fields to compare AND the fields clearly point to a different person/entity (e.g. DOB is 20+ years different, completely different nationality, different gender, clearly different sector):
 - **Classification: False Positive**
-- Pipeline: → set Status to "Completed"
+- Pipeline: → set Status to "L1 Closed" (triggers Report Writer for short False Positive report)
 
 **Check 2 — Score-based classification:**
 
@@ -167,8 +167,8 @@ Common dataset mappings:
 
 | Classification | L1 Classification | Status |
 |---|---|---|
-| No Match | No Match | Completed |
-| False Positive | False Positive | Completed |
+| No Match | No Match | L1 Closed |
+| False Positive | False Positive | L1 Closed |
 | Potential Match | Potential Match | L1 Complete |
 | True Match | True Match | L1 Complete |
 
